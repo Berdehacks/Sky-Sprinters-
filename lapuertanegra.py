@@ -15,7 +15,7 @@ qr = cv2.QRCodeDetector()
 
 
 while 1:
-    img = drone.get_frame_read().frame
+    img = drone.get_frame_read().framew
     img = cv2.resize(img, (width, height))
     ret_qr, points = qr.detect(img)
 
