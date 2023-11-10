@@ -24,6 +24,7 @@ weights = [-25, -15, 0, 15, 25]
 fSpeed = 20
 curve = 0
 
+
 def thresholding(img):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     lower = np.array([hsvVals[0], hsvVals[1], hsvVals[2]])
@@ -31,9 +32,11 @@ def thresholding(img):
     mask = cv2.inRange(hsv, lower, upper)
     return mask
 
+
 def getContours(imgThres, img):
     cx = 0
-    contours, hieracrhy = cv2.findContours(imgThres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hieracrhy = cv2.findContours(
+        imgThres, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     if len(contours) != 0:
         biggest = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(biggest)
@@ -42,6 +45,7 @@ def getContours(imgThres, img):
         cv2.drawContours(img, biggest, -1, (255, 0, 255), 7)
         cv2.circle(img, (cx, cy), 10, (0, 255, 0), cv2.FILLED)
     return cx
+
 
 def getSensorOutput(imgThres, sensors):
     imgs = np.hsplit(imgThres, sensors)
@@ -55,18 +59,20 @@ def getSensorOutput(imgThres, sensors):
             senOut.append(0)
     return senOut
 
+
 def sendCommands(senOut, cx, width):
     global curve
-    ## TRANSLATION
+    # TRANSLATION
     lr = (cx - width // 2) // senstivity
     lr = int(np.clip(lr, -10, 10))
     if 2 > lr > -2:
         lr = 0
 
-    ## Rotation (YAW)
-    path_orientation = (width // 2 - cx) / (width // 2)  # Calculate path orientation
+    # Rotation (YAW)
+    # Calculate path orientation
+    path_orientation = (width // 2 - cx) / (width // 2)
 
-    if senOut == [1, 0, 0]: 
+    if senOut == [1, 0, 0]:
         curve = int(weights[0])
     elif senOut == [1, 1, 0]:
         curve = int(weights[1])
@@ -87,6 +93,7 @@ def sendCommands(senOut, cx, width):
     curve = int(curve - path_orientation * 50)  # Convert curve to an integer
 
     me.send_rc_control(lr, fSpeed, 0, curve)
+
 
 while True:
     img = me.get_frame_read().frame
