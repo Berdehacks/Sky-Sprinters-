@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # Initialize the PID controller, system, setpoints, and time steps
     pid_2d = PIDController2D(kp_x=0.5, ki_x=0.1, kd_x=0.2, kp_y=0.45, ki_y=0.1, kd_y=0.45)
     system_2d = System2D(initial_x=0, initial_y=0)
-    puerta=int(input())
+    puerta=int(input("Escribe que puerta quieres (11,2,3,4)"))
     setpoint_x = 0
     setpoint_y = 0
     if puerta == 1:
