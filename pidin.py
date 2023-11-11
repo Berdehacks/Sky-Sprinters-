@@ -1,3 +1,15 @@
+import djitellopy as tello
+import time
+me = tello.Tello()
+me.connect()
+print(me.get_battery())
+me.streamon()
+
+me.takeoff()
+
+desired_height = -3  # in centimeters
+# me.send_rc_control(0, 0, desired_height, 0)
+
 class PIDController2D:
     def __init__(self, kp_x, ki_x, kd_x, kp_y, ki_y, kd_y):
         # Initialize PID controller with coefficients for X and Y axes
@@ -48,35 +60,42 @@ class System2D:
     def update(self, control_output_x, control_output_y):
         # Simulate the system's response to the control outputs
         self.x += control_output_x
+        
         self.y += control_output_y
 
 # Main loop
 if __name__ == "__main__":
     # Initialize the PID controller, system, setpoints, and time steps
-    pid_2d = PIDController2D(kp_x=0.5, ki_x=0.1, kd_x=0.2, kp_y=0.45, ki_y=0.1, kd_y=0.45)
+    pid_2d = PIDController2D(kp_x=0.9, ki_x=0.1, kd_x=0.2, kp_y=0.45, ki_y=0.1, kd_y=0.45)
     system_2d = System2D(initial_x=0, initial_y=0)
-    puerta=int(input("Escribe que puerta quieres (11,2,3,4)"))
+    puerta=int(input("Escribe que puerta quieres (1,2,3,4)"))
     setpoint_x = 0
     setpoint_y = 0
+    # me.TIME_BTW_RC_CONTROL_COMMANDS=1000
     if puerta == 1:
-        setpoint_x=10
+        setpoint_x=20
+        time.sleep(1)
+        me.send_rc_control(20, 10, 0, 50)
+        time.sleep(10)
+        me.send_rc_control(0, 0, 0, 0)
         setpoint_y=0
     elif puerta ==2:
         setpoint_x=20
+        me.move_right(35)
         setpoint_y = 0
     elif puerta ==3:
         setpoint_x= 10
+        me.move_right(20)
+        me.move_up(20)
         setpoint_y = 5
     elif puerta == 4:
         setpoint_x= 10
+        me.move_right(20)
+        me.move_down(20)
         setpoint_y = -5
 
-
-
-    
-
-
     time_steps = 100
+    
 
     for _ in range(time_steps):
         # Get current positions for X and Y
@@ -85,17 +104,21 @@ if __name__ == "__main__":
 
         # Calculate control outputs for both axes using the PID controller
         control_output_x, control_output_y = pid_2d.control(setpoint_x, current_position_x, setpoint_y, current_position_y)
+        # if control_output_x < 0 :
+        #     me.move_left(int(control_output_x*-1))
+        # elif control_output_x> 0 :
+        #     me.move_right(int(control_output_x))
+        # # Update the system with the control outputs
+        # system_2d.update(control_output_x, control_output_y)
 
-        # Update the system with the control outputs
-        system_2d.update(control_output_x, control_output_y)
-
+        #holgura
         wiggle=0.5
 
         if setpoint_x-wiggle <=current_position_x <= setpoint_x+wiggle and setpoint_y-wiggle <=current_position_y <= setpoint_y+wiggle:
+            print("AVANZA AVANZA AVANZAAAAAA")
             break
 
-        
-
         # Print information for both X and Y axes
-        print(f"Setpoint X: {setpoint_x}, Current Position X: {current_position_x}, Control Output X: {control_output_x}")
-        print(f"Setpoint Y: {setpoint_y}, Current Position Y: {current_position_y}, Control Output Y: {control_output_y}")
+        #print(f"Setpoint X: {setpoint_x}, Current Position X: {current_position_x}, Control Output X: {control_output_x}")
+        #print(f"Setpoint Y: {setpoint_y}, Current Position Y: {current_position_y}, Control Output Y: {control_output_y}")
+
