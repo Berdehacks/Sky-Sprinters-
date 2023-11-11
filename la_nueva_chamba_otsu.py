@@ -30,6 +30,7 @@ cap = cv2.VideoCapture(1)
 # Define maximum speed and maximum YAW angle change
 MS = 30  # maximum speed
 MY = 30  # maximum YAW angle change
+s
 
 
 def thresholding(img):
