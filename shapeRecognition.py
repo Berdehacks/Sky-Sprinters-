@@ -24,7 +24,7 @@ def shapeRecognition(img):
     for contour in contours[1:]:
         # cv2.approxPloyDP() function to approximate the shape
         approx = cv2.approxPolyDP(
-            contour, 0.01 * cv2.arcLength(contour, True), True)
+            contour, 0.1 * cv2.arcLength(contour, True), True)
 
     # using drawContours() function
 
