@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # Initialize the PID controller, system, setpoints, and time steps
     pid_2d = PIDController2D(kp_x=0.5, ki_x=0.1, kd_x=0.2, kp_y=0.45, ki_y=0.1, kd_y=0.45)
     system_2d = System2D(initial_x=0, initial_y=0)
-    puerta=int(input("Escribe que puerta quieres (11,2,3,4)"))
+    puerta=int(input("Escribe que puerta quieres (1,2,3,4)"))
     setpoint_x = 0
     setpoint_y = 0
     if puerta == 1:
@@ -71,11 +71,6 @@ if __name__ == "__main__":
         setpoint_x= 10
         setpoint_y = -5
 
-
-
-    
-
-
     time_steps = 100
 
     for _ in range(time_steps):
@@ -89,12 +84,11 @@ if __name__ == "__main__":
         # Update the system with the control outputs
         system_2d.update(control_output_x, control_output_y)
 
+        #holgura
         wiggle=0.5
 
         if setpoint_x-wiggle <=current_position_x <= setpoint_x+wiggle and setpoint_y-wiggle <=current_position_y <= setpoint_y+wiggle:
             break
-
-        
 
         # Print information for both X and Y axes
         print(f"Setpoint X: {setpoint_x}, Current Position X: {current_position_x}, Control Output X: {control_output_x}")
